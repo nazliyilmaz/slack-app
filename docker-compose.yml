@@ -12,4 +12,4 @@ services:
       - PORT=$PORT
       - SLACK_VERIFICATION_TOKEN=$SLACK_VERIFICATION_TOKEN
     ports:
-      8080:8080
+      - $PORT:$PORT
