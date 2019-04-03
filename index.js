@@ -21,7 +21,7 @@ app.post('/slack/slash-commands/send-me-buttons', (req, res) => {
     res.status(403).end("Access forbidden")
   } else {
     console.log("Access granted")
-    var message = [
+    return res.json([
       {
         "type": "section",
         "text": {
@@ -43,8 +43,8 @@ app.post('/slack/slash-commands/send-me-buttons', (req, res) => {
           }
         ]
       }
-    ]
-    sendMessageToSlackResponseURL(responseURL, message)
+    ]);
+    // sendMessageToSlackResponseURL(responseURL, message)
   }
 })
 
