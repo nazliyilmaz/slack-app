@@ -24,6 +24,7 @@ app.use('/slack/events', slackEvents.expressMiddleware());
 // Attach listeners to events by Slack Event "type". See: https://api.slack.com/events/message.im
 slackEvents.on('message', (event)=> {
   console.log(`Received a message event: user ${event.user} in channel ${event.channel} says ${event.text}`);
+  sendMessage("Did you say '" +event.text + "'?" + event.user, event.channel);
 });
 
 // Handle errors (see `errorCodes` export)
@@ -61,25 +62,30 @@ slackEvents.on('error', console.error);
 //   }
 // })
 //
-// function sendMessageToSlackResponseURL(responseURL, JSONmessage) {
-//   console.log("send response to " + responseURL);
-//   var postOptions = {
-//     uri: responseURL,
-//     method: 'POST',
-//     headers: {
-//       'Content-type': 'application/json'
-//     },
-//     json: JSONmessage
-//   }
-//   request(postOptions, (error, response, body) => {
-//     console.log("slack response: ");
-//     console.log(response);
-//     console.log("slack body: " + body);
-//     if (error) {
-//       // handle errors as you see fit
-//       console.log(error)
-//     }
-//   })
-// }
+
+function sendMessage(message, user, channel) {
+  console.log("send response to " + user);
+  var postOptions = {
+    uri: "https://slack.com/api/chat.postMessage",
+    method: 'POST',
+    headers: {
+      'Content-type': 'application/json',
+      'Authorization': 'Bearer ' + process.env.BOT_TOKEN
+    },
+    json: {
+      "text": `Hello <@${user}> ${message}`,
+      "channel": channel
+    }
+  }
+  request(postOptions, (error, response, body) => {
+    console.log("slack response: ");
+    console.log(response);
+    console.log("slack body: " + body);
+    if (error) {
+      // handle errors as you see fit
+      console.log(error)
+    }
+  })
+}
 
 app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
