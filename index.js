@@ -69,12 +69,12 @@ function sendMessage(message, user, channel) {
     uri: "https://slack.com/api/chat.postMessage",
     method: 'POST',
     headers: {
-      'Content-type': 'application/json',
+      'Content-type': 'application/json; charset=utf-8',
       'Authorization': 'Bearer ' + process.env.BOT_TOKEN
     },
     json: {
       "text": `Hello <@${user}> ${message}`,
-      "channel": "#" + channel
+      "channel": channel
     }
   }
   request(postOptions, (error, response, body) => {
