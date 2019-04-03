@@ -21,14 +21,7 @@ app.post('/slack/slash-commands/send-me-buttons', (req, res) => {
     res.status(403).end("Access forbidden")
   } else {
     console.log("Access granted")
-    return res.json([
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "Hello, your colleague seems not to be responding now. Click the button below to explore more options to reach them."
-        }
-      },
+    return res.json(
       {
         "type": "actions",
         "elements": [
@@ -43,7 +36,7 @@ app.post('/slack/slash-commands/send-me-buttons', (req, res) => {
           }
         ]
       }
-    ]);
+    );
     // sendMessageToSlackResponseURL(responseURL, message)
   }
 })
