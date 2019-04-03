@@ -1,12 +1,12 @@
 // Load environment variables
 require('dotenv').config();
 
-var PORT = process.env.PORT;
-var SLACK_VERIFICATION_TOKEN = process.env.SLACK_VERIFICATION_TOKEN;
+const PORT = process.env.PORT;
+const SLACK_SECRET = process.env.SLACK_SIGNING_SECRET;
 
-var express = require('express');
-var request = require('request');
-var app = express();
+const express = require('express');
+const request = require('request');
+const app = express();
 
 // var bodyParser = require('body-parser');
 // app.use(bodyParser.json());
@@ -17,13 +17,9 @@ const {createEventAdapter} = require('@slack/events-api');
 const {createMessageAdapter} = require('@slack/interactive-messages');
 
 
-const slackEvents = createEventAdapter(process.env.SLACK_SIGNING_SECRET);
+const slackEvents = createEventAdapter(SLACK_SECRET);
 // Create the adapter using the app's signing secret, read from environment variable
-const slackInteractions = createMessageAdapter(process.env.SLACK_SIGNING_SECRET);
-
-const port = process.env.PORT || 3000;
-
-const mapTimers = {};
+const slackInteractions = createMessageAdapter(SLACK_SECRET);
 
 // Mount the event handler on a route
 app.use('/slack/events', slackEvents.expressMiddleware());
@@ -31,19 +27,22 @@ app.use('/slack/events', slackEvents.expressMiddleware());
 // Attach the adapter to the Express application as a middleware
 app.use('/slack/actions', slackInteractions.expressMiddleware());
 
+// keep track of timers, so that we can cancel them when someone reply to a message
+const mapTimers = {};
+
 // Attach listeners to events by Slack Event "type". See: https://api.slack.com/events/message.im
 slackEvents.on('message', (event) => {
   console.log(`Received a message event: user ${event.user} in channel ${event.channel} says ${event.text}`);
   console.log(event);
   // if it comes from a user (not a Bot) and not a thread (reply to message)
   if (event.user !== undefined && event.thread_ts === undefined) {
-    const timer = setTimeout(sendMessage.bind(null, event.text, event.user, event.channel), 5000);
-    mapTimers[event.user + '_' + event.channel] = timer;
+    mapTimers[event.user + '_' + event.channel] =
+      setTimeout(sendMessage.bind(null, event.text, event.user, event.channel), 5000);
   } else if (event.thread_ts !== undefined) {
     const timerIndex = event.parent_user_id + '_' + event.channel;
     if (mapTimers.hasOwnProperty(timerIndex)) {
-        clearTimeout(mapTimers[timerIndex]);
-        delete mapTimers[mapTimers];
+      clearTimeout(mapTimers[timerIndex]);
+      delete mapTimers[mapTimers];
     }
   }
 });
@@ -52,6 +51,9 @@ slackEvents.on('message', (event) => {
 // Run handlerFunction for any interactions from messages with a callback_id of welcome_button
 slackInteractions.action('show-coffee-corner', (payload, respond) => {
   console.log('show coffee corner');
+
+  // TODO: post the message on the board at the coffee corner
+
   const message = {
     text: 'Job done!',
   };
@@ -65,7 +67,7 @@ slackEvents.on('error', console.error);
 
 function sendMessage(message, user, channel) {
   console.log("send response to " + user);
-  var postOptions = {
+  const postOptions = {
     uri: "https://slack.com/api/chat.postMessage",
     method: 'POST',
     headers: {

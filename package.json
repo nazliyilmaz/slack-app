@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@slack/events-api": "^2.2.0",
     "@slack/interactive-messages": "^1.1.1",
