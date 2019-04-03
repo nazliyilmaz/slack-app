@@ -32,6 +32,7 @@ app.use('/slack/actions', slackInteractions.expressMiddleware());
 // Attach listeners to events by Slack Event "type". See: https://api.slack.com/events/message.im
 slackEvents.on('message', (event)=> {
   console.log(`Received a message event: user ${event.user} in channel ${event.channel} says ${event.text}`);
+  console.log(event);
   // if it comes from a user, not a Bot
   if (event.user !== undefined) {
     setTimeout(sendMessage.bind(null, event.text, event.user, event.channel), 5000);
