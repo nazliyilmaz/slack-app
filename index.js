@@ -14,12 +14,20 @@ var app = express();
 
 // Initialize using signing secret from environment variables
 const { createEventAdapter } = require('@slack/events-api');
+const { createMessageAdapter } = require('@slack/interactive-messages');
+
+
 const slackEvents = createEventAdapter(process.env.SLACK_SIGNING_SECRET);
+// Create the adapter using the app's signing secret, read from environment variable
+const slackInteractions = createMessageAdapter(process.env.SLACK_SIGNING_SECRET);
+
 const port = process.env.PORT || 3000;
 
 // Mount the event handler on a route
-// NOTE: you must mount to a path that matches the Request URL that was configured earlier
 app.use('/slack/events', slackEvents.expressMiddleware());
+
+// Attach the adapter to the Express application as a middleware
+app.use('/slack/actions', slackInteractions.expressMiddleware());
 
 // Attach listeners to events by Slack Event "type". See: https://api.slack.com/events/message.im
 slackEvents.on('message', (event)=> {
@@ -29,6 +37,17 @@ slackEvents.on('message', (event)=> {
     sendMessage("Did you say '" +event.text + "'?", event.user, event.channel);
   }
 });
+
+
+// Run handlerFunction for any interactions from messages with a callback_id of welcome_button
+slackInteractions.action('show-coffee-corner', (payload, respond) => {
+  console.log('show coffee corner');
+  const message = {
+    text: 'Job done!',
+  };
+  respond(message);
+});
+
 
 // Handle errors (see `errorCodes` export)
 slackEvents.on('error', console.error);
