@@ -10,7 +10,7 @@ var urlencodedParser = bodyParser.urlencoded({extended: false});
 var PORT = process.env.PORT;
 var SLACK_VERIFICATION_TOKEN = process.env.SLACK_VERIFICATION_TOKEN;
 
-app.get('/slack/slash-commands/send-me-buttons', (req, res) => {
+app.post('/slack/slash-commands/send-me-buttons', (req, res) => {
   res.status(200).end() // best practice to respond with empty 200 status code
   var reqBody = req.body
   var responseURL = reqBody.response_url
