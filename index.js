@@ -32,9 +32,9 @@ app.use('/slack/actions', slackInteractions.expressMiddleware());
 // Attach listeners to events by Slack Event "type". See: https://api.slack.com/events/message.im
 slackEvents.on('message', (event)=> {
   console.log(`Received a message event: user ${event.user} in channel ${event.channel} says ${event.text}`);
-  console.log(event);
+  // if it comes from a user, not a Bot
   if (event.user !== undefined) {
-    sendMessage("Did you say '" +event.text + "'?", event.user, event.channel);
+    setTimeout(sendMessage, 5, [event.text, event.user, event.channel]);
   }
 });
 
@@ -64,12 +64,11 @@ function sendMessage(message, user, channel) {
       'Authorization': 'Bearer ' + process.env.BOT_TOKEN
     },
     json: {
-      "text": `Hey <@${user}>, would you like to show this message on the board at the coffee corner?`,
+      "text": `Hey <@${user}>, looks like you did not get a reply to your message, shall I post it on the board at the coffee corner?`,
       "channel": channel,
       "attachments": [
         {
           "text": message,
-          "fallback": "You are unable to choose a game",
           "callback_id": "show-coffee-corner",
           "color": "#3AA3E3",
           "attachment_type": "default",
@@ -96,20 +95,3 @@ function sendMessage(message, user, channel) {
 }
 
 app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
-
-
-//   {
-//     "type": "actions",
-//     "elements": [
-//     {
-//       "type": "button",
-//       "text": {
-//         "type": "plain_text",
-//         "text": "Explore",
-//         "emoji": true
-//       },
-//       "url": "https://docs.google.com/document/d/1Lr6Zn65WOx7ju2pvjkKSMrhCjeERzAGHDSIjrOO1nj4/edit"
-//     }
-//   ]
-//   }
-// }
