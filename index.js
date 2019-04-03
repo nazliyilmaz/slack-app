@@ -20,6 +20,7 @@ app.post('/slack/slash-commands/send-me-buttons', (req, res) => {
   if (reqBody.token !== SLACK_VERIFICATION_TOKEN) {
     res.status(403).end("Access forbidden")
   } else {
+    console.log("Access granted")
     var message = [
       {
         "type": "section",
@@ -48,6 +49,7 @@ app.post('/slack/slash-commands/send-me-buttons', (req, res) => {
 })
 
 function sendMessageToSlackResponseURL(responseURL, JSONmessage) {
+  console.log("send response to " + responseURL);
   var postOptions = {
     uri: responseURL,
     method: 'POST',
