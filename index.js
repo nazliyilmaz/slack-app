@@ -25,7 +25,7 @@ app.use('/slack/events', slackEvents.expressMiddleware());
 slackEvents.on('message', (event)=> {
   console.log(`Received a message event: user ${event.user} in channel ${event.channel} says ${event.text}`);
   console.log(event);
-  sendMessage("Did you say '" +event.text + "'?" + event.user, event.channel);
+  sendMessage("Did you say '" +event.text + "'?", event.user, event.channel);
 });
 
 // Handle errors (see `errorCodes` export)
@@ -75,7 +75,7 @@ function sendMessage(message, user, channel) {
     },
     json: {
       "text": `Hello <@${user}> ${message}`,
-      "channel": "test"
+      "channel": channel
     }
   }
   request(postOptions, (error, response, body) => {
