@@ -59,6 +59,8 @@ function sendMessageToSlackResponseURL(responseURL, JSONmessage) {
     json: JSONmessage
   }
   request(postOptions, (error, response, body) => {
+    console.log("slack response: " + response);
+    console.log("slack body: " + body);
     if (error) {
       // handle errors as you see fit
       console.log(error)
