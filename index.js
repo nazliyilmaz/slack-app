@@ -13,8 +13,8 @@ var app = express();
 // app.use(bodyParser.urlencoded({extended: false}));
 
 // Initialize using signing secret from environment variables
-const { createEventAdapter } = require('@slack/events-api');
-const { createMessageAdapter } = require('@slack/interactive-messages');
+const {createEventAdapter} = require('@slack/events-api');
+const {createMessageAdapter} = require('@slack/interactive-messages');
 
 
 const slackEvents = createEventAdapter(process.env.SLACK_SIGNING_SECRET);
@@ -23,6 +23,8 @@ const slackInteractions = createMessageAdapter(process.env.SLACK_SIGNING_SECRET)
 
 const port = process.env.PORT || 3000;
 
+const mapTimers = {};
+
 // Mount the event handler on a route
 app.use('/slack/events', slackEvents.expressMiddleware());
 
@@ -30,12 +32,19 @@ app.use('/slack/events', slackEvents.expressMiddleware());
 app.use('/slack/actions', slackInteractions.expressMiddleware());
 
 // Attach listeners to events by Slack Event "type". See: https://api.slack.com/events/message.im
-slackEvents.on('message', (event)=> {
+slackEvents.on('message', (event) => {
   console.log(`Received a message event: user ${event.user} in channel ${event.channel} says ${event.text}`);
   console.log(event);
-  // if it comes from a user, not a Bot
-  if (event.user !== undefined) {
-    setTimeout(sendMessage.bind(null, event.text, event.user, event.channel), 5000);
+  // if it comes from a user (not a Bot) and not a thread (reply to message)
+  if (event.user !== undefined && event.thread_ts === undefined) {
+    const timer = setTimeout(sendMessage.bind(null, event.text, event.user, event.channel), 5000);
+    mapTimers[event.user + '_' + event.channel] = timer;
+  } else if (event.thread_ts !== undefined) {
+    const timerIndex = event.parent_user_id + '_' + event.channel;
+    if (mapTimers.hasOwnProperty(timerIndex)) {
+        clearTimeout(mapTimers[timerIndex]);
+        delete mapTimers[mapTimers];
+    }
   }
 });
 
@@ -52,7 +61,6 @@ slackInteractions.action('show-coffee-corner', (payload, respond) => {
 
 // Handle errors (see `errorCodes` export)
 slackEvents.on('error', console.error);
-
 
 
 function sendMessage(message, user, channel) {
