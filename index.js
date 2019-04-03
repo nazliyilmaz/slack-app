@@ -12,6 +12,7 @@ var SLACK_VERIFICATION_TOKEN = process.env.SLACK_VERIFICATION_TOKEN;
 
 app.post('/slack/slash-commands/send-me-buttons', (req, res) => {
   res.status(200).end() // best practice to respond with empty 200 status code
+  console.log(req.body);
   var reqBody = req.body
   var responseURL = reqBody.response_url
   if (reqBody.token !== SLACK_VERIFICATION_TOKEN) {
