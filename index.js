@@ -4,6 +4,9 @@ require('dotenv').config();
 const PORT = process.env.PORT;
 const SLACK_SECRET = process.env.SLACK_SIGNING_SECRET;
 
+// time in milliseceonds before the bot suggest to post a message
+const RESPONSE_TIME_MS = 5000;
+
 const express = require('express');
 const request = require('request');
 const app = express();
@@ -37,7 +40,7 @@ slackEvents.on('message', (event) => {
   // if it comes from a user (not a Bot) and not a thread (reply to message)
   if (event.user !== undefined && event.thread_ts === undefined) {
     mapTimers[event.user + '_' + event.channel] =
-      setTimeout(sendMessage.bind(null, event.text, event.user, event.channel), 5000);
+      setTimeout(sendMessage.bind(null, event.text, event.user, event.channel), RESPONSE_TIME_MS);
   } else if (event.thread_ts !== undefined) {
     const timerIndex = event.parent_user_id + '_' + event.channel;
     if (mapTimers.hasOwnProperty(timerIndex)) {
