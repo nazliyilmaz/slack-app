@@ -78,9 +78,8 @@ function sendMessage(message, user, channel) {
     }
   }
   request(postOptions, (error, response, body) => {
-    console.log("slack response: ");
-    console.log(response);
     console.log("slack body: " + body);
+    console.log(body);
     if (error) {
       // handle errors as you see fit
       console.log(error)
