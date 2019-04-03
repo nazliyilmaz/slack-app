@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var app = express();
 var urlencodedParser = bodyParser.urlencoded({extended: false});
 
-var port = 8080;
+var PORT = process.env.PORT;
 var SLACK_VERIFICATION_TOKEN = process.env.SLACK_VERIFICATION_TOKEN;
 
 app.get('/slack/slash-commands/send-me-buttons', (req, res) => {
@@ -61,4 +61,4 @@ function sendMessageToSlackResponseURL(responseURL, JSONmessage) {
   })
 }
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
