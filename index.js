@@ -54,36 +54,23 @@ slackEvents.on('error', console.error);
 
 
 
-//
-// app.post('/slack/slash-commands/send-me-buttons', (req, res) => {
-//   // res.status(200).end() // best practice to respond with empty 200 status code
-//   console.log(req.body);
-//   var reqBody = req.body
-//   var responseURL = reqBody.response_url
-//   if (reqBody.token !== SLACK_VERIFICATION_TOKEN) {
-//     res.status(403).end("Access forbidden")
-//   } else {
-//     console.log("Access granted")
-//     return res.json(
-//       {
-//         "type": "actions",
-//         "elements": [
-//           {
-//             "type": "button",
-//             "text": {
-//               "type": "plain_text",
-//               "text": "Explore",
-//               "emoji": true
-//             },
-//             "url": "https://docs.google.com/document/d/1Lr6Zn65WOx7ju2pvjkKSMrhCjeERzAGHDSIjrOO1nj4/edit"
-//           }
-//         ]
-//       }
-//     );
-//     // sendMessageToSlackResponseURL(responseURL, message)
-//   }
-// })
-//
+
+app.post('/slack/slash-commands/send-me-buttons', (req, res) => {
+  // res.status(200).end() // best practice to respond with empty 200 status code
+  console.log(req.body);
+  var reqBody = req.body
+  var responseURL = reqBody.response_url
+  if (reqBody.token !== SLACK_VERIFICATION_TOKEN) {
+    res.status(403).end("Access forbidden")
+  } else {
+    console.log("Access granted")
+    return res.json(
+
+    );
+    // sendMessageToSlackResponseURL(responseURL, message)
+  }
+})
+
 
 function sendMessage(message, user, channel) {
   console.log("send response to " + user);
@@ -95,10 +82,26 @@ function sendMessage(message, user, channel) {
       'Authorization': 'Bearer ' + process.env.BOT_TOKEN
     },
     json: {
-      "text": `Hello <@${user}> ${message}`,
-      "channel": channel
+      "text": `Hey <@${user}>, would you like to show this message on the board at the coffee corner?`,
+      "channel": channel,
+      "attachments": [
+        {
+          "fallback": "You are unable to choose a game",
+          "callback_id": "show-coffee-corner",
+          "color": "#3AA3E3",
+          "attachment_type": "default",
+          "actions": [
+            {
+              "name": "show-bt",
+              "text": "Yes",
+              "type": "button",
+              "value": "yes"
+            }
+          ]
+        }
+      ]
     }
-  }
+  };
   request(postOptions, (error, response, body) => {
     console.log("slack body: " + body);
     console.log(body);
@@ -109,4 +112,21 @@ function sendMessage(message, user, channel) {
   })
 }
 
-app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
+app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
+
+
+//   {
+//     "type": "actions",
+//     "elements": [
+//     {
+//       "type": "button",
+//       "text": {
+//         "type": "plain_text",
+//         "text": "Explore",
+//         "emoji": true
+//       },
+//       "url": "https://docs.google.com/document/d/1Lr6Zn65WOx7ju2pvjkKSMrhCjeERzAGHDSIjrOO1nj4/edit"
+//     }
+//   ]
+//   }
+// }
