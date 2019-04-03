@@ -1,14 +1,16 @@
 // Load environment variables
 require('dotenv').config();
 
+var PORT = process.env.PORT;
+var SLACK_VERIFICATION_TOKEN = process.env.SLACK_VERIFICATION_TOKEN;
+
 var express = require('express');
 var request = require('request');
 var bodyParser = require('body-parser');
 var app = express();
-var urlencodedParser = bodyParser.urlencoded({extended: false});
 
-var PORT = process.env.PORT;
-var SLACK_VERIFICATION_TOKEN = process.env.SLACK_VERIFICATION_TOKEN;
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.post('/slack/slash-commands/send-me-buttons', (req, res) => {
   res.status(200).end() // best practice to respond with empty 200 status code
