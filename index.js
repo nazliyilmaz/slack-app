@@ -6,9 +6,9 @@ var SLACK_VERIFICATION_TOKEN = process.env.SLACK_VERIFICATION_TOKEN;
 
 var express = require('express');
 var request = require('request');
-// var bodyParser = require('body-parser');
 var app = express();
 
+// var bodyParser = require('body-parser');
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({extended: false}));
 
@@ -54,24 +54,6 @@ slackEvents.on('error', console.error);
 
 
 
-
-app.post('/slack/slash-commands/send-me-buttons', (req, res) => {
-  // res.status(200).end() // best practice to respond with empty 200 status code
-  console.log(req.body);
-  var reqBody = req.body
-  var responseURL = reqBody.response_url
-  if (reqBody.token !== SLACK_VERIFICATION_TOKEN) {
-    res.status(403).end("Access forbidden")
-  } else {
-    console.log("Access granted")
-    return res.json(
-
-    );
-    // sendMessageToSlackResponseURL(responseURL, message)
-  }
-})
-
-
 function sendMessage(message, user, channel) {
   console.log("send response to " + user);
   var postOptions = {
@@ -86,6 +68,7 @@ function sendMessage(message, user, channel) {
       "channel": channel,
       "attachments": [
         {
+          "text": message,
           "fallback": "You are unable to choose a game",
           "callback_id": "show-coffee-corner",
           "color": "#3AA3E3",
@@ -93,7 +76,7 @@ function sendMessage(message, user, channel) {
           "actions": [
             {
               "name": "show-bt",
-              "text": "Yes",
+              "text": "Show @ the Coffee Corner",
               "type": "button",
               "value": "yes"
             }
