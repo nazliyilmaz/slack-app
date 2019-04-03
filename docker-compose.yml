@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  slack-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: slack-app
+    environment:
+      - LOG_LEVEL=$LOG_LEVEL
+      - PORT=$PORT
+      - SLACK_VERIFICATION_TOKEN=$SLACK_VERIFICATION_TOKEN
