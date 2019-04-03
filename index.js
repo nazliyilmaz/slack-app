@@ -74,7 +74,7 @@ function sendMessage(message, user, channel) {
     },
     json: {
       "text": `Hello <@${user}> ${message}`,
-      "channel": channel
+      "channel": "#" + channel
     }
   }
   request(postOptions, (error, response, body) => {
