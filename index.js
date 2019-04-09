@@ -70,6 +70,7 @@ slackEvents.on('error', console.error);
 
 function sendMessage(message, channel, user) {
   console.log("send response to " + user);
+  console.log("on channel " + channel);
   const postOptions = {
     uri: "https://slack.com/api/chat.postMessage",
     method: 'POST',
