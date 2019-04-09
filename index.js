@@ -81,22 +81,23 @@ function sendMessage(message, channel, user) {
     json: {
       "text": `Hey <@${user}>, looks like you did not get a reply to your message, shall I post it on the board at the coffee corner?`,
       "channel": channel,
-      "attachments": [
+      "attachments":[
         {
-          "text": message,
-          "callback_id": "show-coffee-corner",
-          "color": "#3AA3E3",
-          "attachment_type": "default",
-          "actions": [
-            {
-              "name": "show-bt",
-              "text": "Show @ the Coffee Corner",
-              "type": "button",
-              "value": "yes"
-            }
-          ]
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "You can add a button alongside text in your message. "
+          },
+          "accessory": {
+            "type": "button",
+            "text": {
+              "type": "plain_text",
+              "text": "Post a Message"
+            },
+            "url": "https://padlet.com/nazliyilmazzz/kdd2ycx78a3y"
+          }
         }
-      ]
+      ] 
     }
   };
   request(postOptions, (error, response, body) => {
