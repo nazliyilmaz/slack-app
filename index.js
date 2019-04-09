@@ -40,7 +40,7 @@ slackEvents.on('message', (event) => {
   // if it comes from a user (not a Bot) and not a thread (reply to message)
   if (event.user !== undefined && event.thread_ts === undefined) {
     mapTimers[event.user + '_' + event.channel] =
-      setTimeout(sendMessage.bind(null, event.text, event.user, event.channel), RESPONSE_TIME_MS);
+      setTimeout(sendMessage.bind(null, event.text, event.channel, event.user), RESPONSE_TIME_MS);
   } else if (event.thread_ts !== undefined) {
     const timerIndex = event.parent_user_id + '_' + event.channel;
     if (mapTimers.hasOwnProperty(timerIndex)) {
@@ -68,7 +68,7 @@ slackInteractions.action('show-coffee-corner', (payload, respond) => {
 slackEvents.on('error', console.error);
 
 
-function sendMessage(message, user, channel) {
+function sendMessage(message, channel, user) {
   console.log("send response to " + user);
   const postOptions = {
     uri: "https://slack.com/api/chat.postMessage",
