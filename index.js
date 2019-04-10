@@ -80,7 +80,7 @@ function sendMessage(message, channel, user) {
     },
     json: {
       "text": `Hey <@${user}>, looks like you did not get a reply to your message, shall I post it on the board at the coffee corner?`,
-      "channel": channel,
+      "channel": "#general",
       "attachments": [
         {
           "text": message,
